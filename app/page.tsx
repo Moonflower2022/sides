@@ -4,6 +4,7 @@ import { useState } from 'react';
 import InputForm from '@/components/InputForm';
 import ComparisonTable from '@/components/ComparisonTable';
 import PriorityPanel from '@/components/customization/PriorityPanel';
+import RefinementPanel from '@/components/RefinementPanel';
 import { useComparisonStore } from '@/lib/store';
 
 export default function Home() {
@@ -41,8 +42,9 @@ export default function Home() {
                 <PriorityPanel />
               </div>
             )}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 space-y-6">
               <ComparisonTable />
+              <RefinementPanel />
             </div>
           </div>
         )}

@@ -12,7 +12,7 @@ export default function InputForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isDragging, setIsDragging] = useState(false);
-  const { setComparison } = useComparisonStore();
+  const { setComparison, setApiKey: setStoreApiKey } = useComparisonStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,6 +45,9 @@ export default function InputForm() {
       };
 
       setComparison(comparison);
+      if (apiKey.trim()) {
+        setStoreApiKey(apiKey);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to parse comparison');
     } finally {

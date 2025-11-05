@@ -4,7 +4,9 @@ import { generateId } from './utils';
 
 interface ComparisonStore {
   comparison: Comparison | null;
+  apiKey: string;
   setComparison: (comparison: Comparison) => void;
+  setApiKey: (apiKey: string) => void;
   updateUserPreferences: (preferences: UserPreferences) => void;
   updateCategoryWeight: (category: string, importance: number) => void;
   addItem: (item: ComparisonItem) => void;
@@ -32,8 +34,11 @@ const createDefaultPreferences = (categories: string[]): UserPreferences => ({
 
 export const useComparisonStore = create<ComparisonStore>((set) => ({
   comparison: null,
+  apiKey: '',
 
   setComparison: (comparison) => set({ comparison }),
+
+  setApiKey: (apiKey) => set({ apiKey }),
 
   updateUserPreferences: (preferences) => set((state) => {
     if (!state.comparison) return state;
