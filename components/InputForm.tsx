@@ -8,7 +8,7 @@ import { Upload, Sparkles } from 'lucide-react';
 
 export default function InputForm() {
   const [inputText, setInputText] = useState('');
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useState(process.env.NEXT_PUBLIC_GEMINI_API_KEY || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isDragging, setIsDragging] = useState(false);

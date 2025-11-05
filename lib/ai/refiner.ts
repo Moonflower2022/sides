@@ -12,7 +12,7 @@ export async function refineComparison(
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
 
   const prompt = `You are a comparison refinement assistant. You will receive a comparison object and instructions on how to modify it.
 
