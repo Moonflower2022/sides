@@ -16,13 +16,15 @@ User Input:
 ${text}
 
 Extract:
-1. All items/options being compared
-2. Pros and cons for each item
-3. Rate each point's importance (1-10, where 10 is most important)
-4. Identify categories (price, quality, features, performance, etc.)
+1. A short, descriptive title for this comparison (2-6 words)
+2. All items/options being compared
+3. Pros and cons for each item
+4. Rate each point's importance (1-10, where 10 is most important)
+5. Identify categories (price, quality, features, performance, etc.)
 
 Return ONLY valid JSON in this exact format (no markdown, no code blocks, just pure JSON):
 {
+  "title": "Brief comparison title",
   "items": [
     {
       "name": "Item Name",
@@ -76,6 +78,7 @@ Rules:
   }));
 
   return {
+    title: parsed.title || 'My Comparison',
     items,
     categories: parsed.categories || []
   };
@@ -83,6 +86,8 @@ Rules:
 
 // Mock parser for testing without API key
 export function mockParseComparisonText(text: string): ParsedInput {
+  const title = text.split('\n')[0].substring(0, 50) || 'My Comparison';
+
   // Simple mock that creates a basic comparison
   const items: ComparisonItem[] = [
     {
@@ -106,6 +111,7 @@ export function mockParseComparisonText(text: string): ParsedInput {
   ];
 
   return {
+    title,
     items,
     categories: ['quality', 'price', 'performance']
   };

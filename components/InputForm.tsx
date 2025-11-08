@@ -36,7 +36,7 @@ export default function InputForm() {
 
       const comparison = {
         id: generateId(),
-        title: 'My Comparison',
+        title: parsed.title || 'My Comparison',
         items: parsed.items,
         categories: parsed.categories,
         userPreferences: createDefaultPreferences(parsed.categories),

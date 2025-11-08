@@ -1,15 +1,17 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useComparisonStore } from '@/lib/store';
 import { rankItems } from '@/lib/scoring/calculator';
-import { Trophy, Download, RotateCcw, Medal, Award, X } from 'lucide-react';
+import { Trophy, Download, RotateCcw, Medal, Award, X, Edit2, Check } from 'lucide-react';
 import ItemColumn from './ItemColumn';
 import EditablePoint from './EditablePoint';
 import HistoryPanel from './HistoryPanel';
 
 export default function ComparisonTable() {
-  const { comparison, reset, updatePoint, removeItem } = useComparisonStore();
+  const { comparison, reset, updatePoint, removeItem, updateTitle } = useComparisonStore();
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleInput, setTitleInput] = useState('');
 
   const scores = useMemo(() => {
     if (!comparison || !comparison.userPreferences) return [];
@@ -52,8 +54,57 @@ export default function ComparisonTable() {
     a.click();
   };
 
+  const handleTitleEdit = () => {
+    setTitleInput(comparison?.title || '');
+    setIsEditingTitle(true);
+  };
+
+  const handleTitleSave = () => {
+    if (titleInput.trim()) {
+      updateTitle(titleInput.trim());
+    }
+    setIsEditingTitle(false);
+  };
+
   return (
     <div className="space-y-6">
+      {/* Editable Title */}
+      <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="flex items-center gap-3">
+          {isEditingTitle ? (
+            <>
+              <input
+                type="text"
+                value={titleInput}
+                onChange={(e) => setTitleInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleTitleSave()}
+                className="flex-1 text-2xl font-bold border-b-2 border-blue-500 focus:outline-none"
+                autoFocus
+              />
+              <button
+                onClick={handleTitleSave}
+                className="p-2 hover:bg-green-100 rounded transition-colors"
+              >
+                <Check className="w-5 h-5 text-green-600" />
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold text-gray-900 flex-1">
+                {comparison?.title || 'My Comparison'}
+              </h2>
+              <button
+                onClick={handleTitleEdit}
+                className="p-2 hover:bg-gray-100 rounded transition-colors"
+                title="Edit title"
+              >
+                <Edit2 className="w-4 h-4 text-gray-500" />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
       {/* Header with Actions */}
       {!comparison.userPreferences?.hideWinner && (
         <div className="bg-white rounded-lg shadow-sm p-4 flex items-center justify-between">

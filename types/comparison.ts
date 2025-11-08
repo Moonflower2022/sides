@@ -63,6 +63,7 @@ export interface Comparison {
 }
 
 export interface ParsedInput {
+  title?: string;
   items: ComparisonItem[];
   categories: string[];
 }

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useComparisonStore } from '@/lib/store';
 import CategorySlider from './CategorySlider';
 import { Settings, TrendingUp, Eye, Sparkles, Loader2 } from 'lucide-react';
-import { loadHistory, getAveragePreferences, hasEnoughHistory } from '@/lib/storage';
+import { loadHistory, getAveragePreferences, hasEnoughHistory, saveDisplayPreferences } from '@/lib/storage';
 import { createPersonalizedWeights, simplePreferenceMapping } from '@/lib/ai/preferenceMapper';
 
 const PRESET_PROFILES = [
@@ -193,6 +193,7 @@ export default function PriorityPanel() {
             <button
               onClick={() => {
                 const newShowScores = !comparison.userPreferences?.showScores;
+                saveDisplayPreferences(newShowScores, !newShowScores);
                 updateUserPreferences({
                   ...comparison.userPreferences!,
                   hideWinner: !newShowScores,
