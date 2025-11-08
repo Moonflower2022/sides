@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Comparison, ComparisonItem, UserPreferences, CategoryWeight } from '@/types/comparison';
 import { generateId } from './utils';
-import { saveToHistory } from './storage';
+import { saveToHistory, saveCurrentComparison, loadCurrentComparison } from './storage';
 
 interface ComparisonStore {
   comparison: Comparison | null;
@@ -34,11 +34,12 @@ const createDefaultPreferences = (categories: string[]): UserPreferences => ({
 });
 
 export const useComparisonStore = create<ComparisonStore>((set) => ({
-  comparison: null,
+  comparison: loadCurrentComparison(),
   apiKey: '',
 
   setComparison: (comparison) => {
     saveToHistory(comparison);
+    saveCurrentComparison(comparison);
     set({ comparison });
   },
 
@@ -51,6 +52,7 @@ export const useComparisonStore = create<ComparisonStore>((set) => ({
       userPreferences: preferences
     };
     saveToHistory(updatedComparison);
+    saveCurrentComparison(updatedComparison);
     return {
       comparison: updatedComparison
     };
@@ -72,6 +74,7 @@ export const useComparisonStore = create<ComparisonStore>((set) => ({
     };
 
     saveToHistory(updatedComparison);
+    saveCurrentComparison(updatedComparison);
 
     return {
       comparison: updatedComparison
@@ -80,21 +83,25 @@ export const useComparisonStore = create<ComparisonStore>((set) => ({
 
   addItem: (item) => set((state) => {
     if (!state.comparison) return state;
+    const updatedComparison = {
+      ...state.comparison,
+      items: [...state.comparison.items, item]
+    };
+    saveCurrentComparison(updatedComparison);
     return {
-      comparison: {
-        ...state.comparison,
-        items: [...state.comparison.items, item]
-      }
+      comparison: updatedComparison
     };
   }),
 
   removeItem: (itemId) => set((state) => {
     if (!state.comparison) return state;
+    const updatedComparison = {
+      ...state.comparison,
+      items: state.comparison.items.filter(item => item.id !== itemId)
+    };
+    saveCurrentComparison(updatedComparison);
     return {
-      comparison: {
-        ...state.comparison,
-        items: state.comparison.items.filter(item => item.id !== itemId)
-      }
+      comparison: updatedComparison
     };
   }),
 
@@ -117,15 +124,22 @@ export const useComparisonStore = create<ComparisonStore>((set) => ({
       };
     });
 
+    const updatedComparison = {
+      ...state.comparison,
+      items: updatedItems
+    };
+
+    saveCurrentComparison(updatedComparison);
+
     return {
-      comparison: {
-        ...state.comparison,
-        items: updatedItems
-      }
+      comparison: updatedComparison
     };
   }),
 
-  reset: () => set({ comparison: null })
+  reset: () => {
+    saveCurrentComparison(null);
+    set({ comparison: null });
+  }
 }));
 
 export { createDefaultPreferences };

@@ -6,6 +6,7 @@ import { rankItems } from '@/lib/scoring/calculator';
 import { Trophy, Download, RotateCcw, Medal, Award, X } from 'lucide-react';
 import ItemColumn from './ItemColumn';
 import EditablePoint from './EditablePoint';
+import HistoryPanel from './HistoryPanel';
 
 export default function ComparisonTable() {
   const { comparison, reset, updatePoint, removeItem } = useComparisonStore();
@@ -68,6 +69,7 @@ export default function ComparisonTable() {
             </div>
           </div>
           <div className="flex gap-2">
+            <HistoryPanel />
             <button
               onClick={handleExportCSV}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
@@ -90,6 +92,7 @@ export default function ComparisonTable() {
       {comparison.userPreferences?.hideWinner && (
         <div className="bg-white rounded-lg shadow-sm p-4 flex items-center justify-end">
           <div className="flex gap-2">
+            <HistoryPanel />
             <button
               onClick={handleExportCSV}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
