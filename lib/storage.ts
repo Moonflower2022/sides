@@ -188,11 +188,12 @@ export function loadCurrentComparison(): Comparison | null {
 /**
  * Save user's display preferences
  */
-export function saveDisplayPreferences(showScores: boolean, hideWinner: boolean): void {
+export function saveDisplayPreferences(showScores: boolean, hideWinner: boolean, showChart?: boolean): void {
   if (typeof window === 'undefined') return;
 
   try {
-    localStorage.setItem(PREFERENCES_KEY, JSON.stringify({ showScores, hideWinner }));
+    const prefs = { showScores, hideWinner, showChart: showChart ?? true };
+    localStorage.setItem(PREFERENCES_KEY, JSON.stringify(prefs));
   } catch (error) {
     console.error('Failed to save preferences:', error);
   }
@@ -201,17 +202,22 @@ export function saveDisplayPreferences(showScores: boolean, hideWinner: boolean)
 /**
  * Load user's display preferences
  */
-export function loadDisplayPreferences(): { showScores: boolean; hideWinner: boolean } {
-  if (typeof window === 'undefined') return { showScores: true, hideWinner: false };
+export function loadDisplayPreferences(): { showScores: boolean; hideWinner: boolean; showChart: boolean } {
+  if (typeof window === 'undefined') return { showScores: true, hideWinner: false, showChart: true };
 
   try {
     const stored = localStorage.getItem(PREFERENCES_KEY);
-    if (!stored) return { showScores: true, hideWinner: false };
+    if (!stored) return { showScores: true, hideWinner: false, showChart: true };
 
-    return JSON.parse(stored);
+    const parsed = JSON.parse(stored);
+    return {
+      showScores: parsed.showScores ?? true,
+      hideWinner: parsed.hideWinner ?? false,
+      showChart: parsed.showChart ?? true
+    };
   } catch (error) {
     console.error('Failed to load preferences:', error);
-    return { showScores: true, hideWinner: false };
+    return { showScores: true, hideWinner: false, showChart: true };
   }
 }
 

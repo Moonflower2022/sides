@@ -1,20 +1,33 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useComparisonStore } from '@/lib/store';
 import { rankItems } from '@/lib/scoring/calculator';
 import { Trophy, Download, RotateCcw, Medal, Award, X, Edit2, Check, BarChart3 } from 'lucide-react';
 import ItemColumn from './ItemColumn';
 import EditablePoint from './EditablePoint';
 import HistoryPanel from './HistoryPanel';
-import SpiderChart from './SpiderChart';
+import SpiderChart, { getItemColor } from './SpiderChart';
 import AddPointButton from './AddPointButton';
+import { loadDisplayPreferences, saveDisplayPreferences } from '@/lib/storage';
 
 export default function ComparisonTable() {
   const { comparison, reset, updatePoint, removeItem, updateTitle, deletePoint, addPoint } = useComparisonStore();
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleInput, setTitleInput] = useState('');
-  const [showSpiderChart, setShowSpiderChart] = useState(false);
+  const [showSpiderChart, setShowSpiderChart] = useState(true);
+
+  useEffect(() => {
+    const prefs = loadDisplayPreferences();
+    setShowSpiderChart(prefs.showChart);
+  }, []);
+
+  const toggleSpiderChart = () => {
+    const newValue = !showSpiderChart;
+    setShowSpiderChart(newValue);
+    const prefs = loadDisplayPreferences();
+    saveDisplayPreferences(prefs.showScores, prefs.hideWinner, newValue);
+  };
 
   const scores = useMemo(() => {
     if (!comparison || !comparison.userPreferences) return [];
@@ -128,7 +141,7 @@ export default function ComparisonTable() {
           <div className="flex gap-2">
             <HistoryPanel />
             <button
-              onClick={() => setShowSpiderChart(!showSpiderChart)}
+              onClick={toggleSpiderChart}
               className={`px-4 py-2 border rounded-lg transition-colors flex items-center gap-2 ${
                 showSpiderChart ? 'bg-blue-50 border-blue-300 text-blue-700' : 'border-gray-300 hover:bg-gray-50'
               }`}
@@ -160,7 +173,7 @@ export default function ComparisonTable() {
           <div className="flex gap-2">
             <HistoryPanel />
             <button
-              onClick={() => setShowSpiderChart(!showSpiderChart)}
+              onClick={toggleSpiderChart}
               className={`px-4 py-2 border rounded-lg transition-colors flex items-center gap-2 ${
                 showSpiderChart ? 'bg-blue-50 border-blue-300 text-blue-700' : 'border-gray-300 hover:bg-gray-50'
               }`}
@@ -204,10 +217,14 @@ export default function ComparisonTable() {
                 </th>
                 {comparison.items.map((item) => {
                   const score = scores.find(s => s.itemId === item.id);
+                  const itemColor = getItemColor(item.id, comparison.items);
                   return (
                     <th key={item.id} className="px-6 py-4 text-left border-l border-gray-200">
                       <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-bold text-lg text-gray-900">{item.name}</h3>
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: itemColor }} />
+                          <h3 className="font-bold text-lg text-gray-900">{item.name}</h3>
+                        </div>
                         <div className="flex items-center gap-2">
                           {comparison.userPreferences?.showScores && (
                             <>
